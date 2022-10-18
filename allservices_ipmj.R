@@ -1,24 +1,43 @@
 #####CREATE QUEJAS DATABASE##########
-#####Checking the regressions before####
-
-git config --global credential.helper store
+#####Checking the regressions beforef####
 
 install.packages(c("readxl", "readr", "haven", "purr", 
-                   "dplyr", "estimatr"))
+                   "dplyr", "estimatr", "modelr","tidyverse"))
+
 library(readxl)
 library(readr)
 library(haven)
-library(purr)
+library(purrr)
 library(dplyr)
 library(estimatr)
+library(modelr)
+library(tidyverse)
 services<-read_dta("services.dta")
 glimpse(services)
+gathered <- 
 maintenance<-lm_robust(maintenance_pc~
                          Income+participation+votos+pob+density+factor(ANY_DATA_ALTA)+factor(CODI_DISTRICTE),
                        data=services,
                        clusters=CODI_DISTRICTE,
                        se_type="stata")
+
 summary(maintenance)
+
+models<-c("maintenance_pc", "waste_pc", "cleaning_pc",
+          "safety_pc", "health_pc", "mobility_pc", "urbanims_pc",
+          "transport_pc", "christmas_pc")
+
+
+income_complaint<-function(x){
+  lm_robust(x~Income+participation+votos+pob+density+factor(ANY_DATA_ALTA)+factor(CODI_DISTRICTE),
+                       data=services,
+                       clusters=CODI_DISTRICTE,
+                       se_type="stata")
+}
+
+income_complaint(x="maintenance_pc")
+
+
 ####Checking the new regressions###
 
 quejas<-rbind(com2014, com2015, com2016, com2017, com2018,com2019)
