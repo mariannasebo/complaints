@@ -1,5 +1,8 @@
 #####CREATE QUEJAS DATABASE##########
 #####Checking the regressions before####
+
+git config --global credential.helper store
+
 install.packages(c("readxl", "readr", "haven", "purr", 
                    "dplyr", "estimatr"))
 library(readxl)
