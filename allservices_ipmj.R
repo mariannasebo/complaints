@@ -1,9 +1,24 @@
 #####CREATE QUEJAS DATABASE##########
+#####Checking the regressions before####
+install.packages(c("readxl", "readr", "haven", "purr", 
+                   "dplyr", "estimatr"))
 library(readxl)
 library(readr)
-quejas<-rbind(com2014, com2015, com2016, com2017, com2018,com2019)
-library(purrr)
+library(haven)
+library(purr)
 library(dplyr)
+library(estimatr)
+services<-read_dta("services.dta")
+glimpse(services)
+maintenance<-lm_robust(maintenance_pc~
+                         Income+participation+votos+pob+density+factor(ANY_DATA_ALTA)+factor(CODI_DISTRICTE),
+                       data=services,
+                       clusters=CODI_DISTRICTE,
+                       se_type="stata")
+summary(maintenance)
+####Checking the new regressions###
+
+quejas<-rbind(com2014, com2015, com2016, com2017, com2018,com2019)
 quejas <- quejas %>% modify_if(is.character, as.factor)
 distribution_types<-quejas%>%group_by(TIPUS)%>%tally()%>%ungroup()%>%arrange(desc(n))%>%mutate(percentage=n*100/1041649)
 
